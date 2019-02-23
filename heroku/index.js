@@ -10,6 +10,7 @@ var bodyParser = require('body-parser');
 var express = require('express');
 var app = express();
 var xhub = require('express-x-hub');
+var 
 
 app.set('port', (process.env.PORT || 5000));
 app.listen(app.get('port'));
@@ -22,7 +23,7 @@ var received_updates = [];
 
 app.get('/', function(req, res) {
   console.log(req);
-  res.send('<pre>Test result</pre><pre>' + JSON.stringify(received_updates, null, 2) + '</pre>');
+  res.send('<pre>'+appGetID(received_updates)+'</pre><pre>' + JSON.stringify(received_updates, null, 2) + '</pre>');
 });
 
 app.get(['/facebook', '/instagram'], function(req, res) {   
@@ -58,5 +59,48 @@ app.post('/instagram', function(req, res) {
   received_updates.unshift(req.body);
   res.sendStatus(200);
 });
+
+app.get('/facebook-search/:id', (req, res) => {
+
+  // you need permission for most of these fields
+  const userFieldSet = 'id, name, about, email, accounts, link, is_verified, significant_other, relationship_status, website, picture, photos, feed';
+
+  const options = {
+    method: 'GET',
+    uri: `https://graph.facebook.com/v2.8/${req.params.id}`,
+    qs: {
+      access_token: user_access_token,
+      fields: userFieldSet
+    }
+  };
+  request(options)
+    .then(fbRes => {
+      res.json(fbRes);
+    })
+})
+
+// Generic method to get id and field
+app.get('/appGetID/:id', (req, res) => {
+
+  // you need permission for most of these fields
+  const userFieldSet = 'id, name, about, email, accounts, link, is_verified, significant_other, relationship_status, website, picture, photos, feed';
+
+  const options = {
+    method: 'GET',
+    uri: `https://graph.facebook.com/v2.8/${req.params.id}`,
+    qs: {
+      access_token: user_access_token,
+      fields: userFieldSet
+    }
+  };
+  request(options)
+    .then(fbRes => {
+      res.json(fbRes);
+    })
+})
+
+function appGetID(data) {  
+  return `Hello ${data}!`;
+}
 
 app.listen();
