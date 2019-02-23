@@ -79,28 +79,4 @@ app.get('/facebook-search/:id', (req, res) => {
     })
 })
 
-// Generic method to get id and field
-app.get('/appGetID/:id', (req, res) => {
-
-  // you need permission for most of these fields
-  const userFieldSet = 'id, name, about, email, accounts, link, is_verified, significant_other, relationship_status, website, picture, photos, feed';
-
-  const options = {
-    method: 'GET',
-    uri: `https://graph.facebook.com/v2.8/${req.params.id}`,
-    qs: {
-      access_token: user_access_token,
-      fields: userFieldSet
-    }
-  };
-  request(options)
-    .then(fbRes => {
-      res.json(fbRes);
-    })
-})
-
-function appGetID(data) {  
-  return `Hello ${data}!`;
-}
-
 app.listen();
